@@ -37,6 +37,11 @@
     @include ms-fontColor-white;
   }
 
+  .dropdown {
+    width: 60%;
+    margin-left: 10px;
+  }
+
   .button {
     // Our button
     text-decoration: none;
