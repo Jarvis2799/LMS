@@ -24,25 +24,25 @@ export default class HelloWorld extends React.Component<IHelloWorldProps, IHello
   }
 public getListTitle=(event:any, data:any)=>{
   this.selectedListTitle=data.text;
-};
+}
 public getLeaveSettings=(event:any, data:any)=>{
   this.selectedLeaveSettings=data.text;
-};
+}
 public componentDidMount(){
   this._spOps.GetAllHolidayList(this.props.context).then((result:IDropdownOption[])=>{
-    this.setState({listTitle:result})
+    this.setState({listTitle:result});
 
   this._spOps.GetAllLeaveSettings(this.props.context).then((result:IChoiceGroupOption[])=>{
-    this.setState({leaveSettings: result})
-  })
-  })
+    this.setState({leaveSettings: result});
+  });
+  });
 }
 
   public render(): React.ReactElement<IHelloWorldProps> {
     let option: IDropdownOption[]=[];
 
     const printList= this.state.listTitle.map( item=>
-        <p>{item.text}&emsp;{item.key}</p>)
+        <p>{item.text}&emsp;{item.key}</p>);
 
     return (
       <div className={ styles.helloWorld }>

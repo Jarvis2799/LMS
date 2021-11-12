@@ -8,17 +8,28 @@ import { TextField} from '@fluentui/react/lib/TextField';
 import { Dropdown, IDropdownOption, Label, Pivot, PivotItem, PrimaryButton,DefaultButton, List, IChoiceGroupOption, ChoiceGroup, format} from "office-ui-fabric-react";
 
 import * as jquery from "jquery";
+import { getJSON } from 'jquery';
+import { useEffect, useState } from 'react';
 
 export default class Employee extends React.Component<IEmployeeProps, IEmployeeState, {}> {
   public _spOps: SPOperations;
   public selectedListTitle:string;
+  public selectedListTitle2:string;
   public selectedLeaveSettings: string;
+  
 
   constructor(props: IEmployeeProps){
     super(props);
     this._spOps= new SPOperations();
-    this.state= {listTitle:[], leaveSettings:[] ,status: "", sDate: ""};
-     
+    this.state= {listTitle:[], leaveSettings:[] ,status: "", sDate: "", items: [{id: "",
+    user_id: "",
+    start_date: "",
+    end_date: "",
+    cc: "",
+    type: "",
+    comment: "",
+    status: ""}],
+    creds:[{text: ""}]};
   }
 public getListTitle=(event:any, data:any)=>{
   this.selectedListTitle=data.text;
@@ -26,96 +37,106 @@ public getListTitle=(event:any, data:any)=>{
 public getLeaveSettings=(event:any, data:any)=>{
   this.selectedLeaveSettings=data.text;
 };
+public getListTitle2=(event:any, data:any)=>{
+  this.selectedListTitle2=data.text;
+};
 public componentDidMount(){
   this._spOps.GetAllHolidayList(this.props.context).then((result:IDropdownOption[])=>{
-    this.setState({listTitle:result})
+    this.setState({listTitle:result}); })
 
+    fetch("https://contosofunctions.azurewebsites.net/api/getitem/")
+    .then((res) => res.json())
+    .then((json) => {
+    this.setState({items: json});
+    })
+  
   this._spOps.GetAllLeaveSettings(this.props.context).then((result:IChoiceGroupOption[])=>{
-    this.setState({leaveSettings: result})
-  })
+    this.setState({leaveSettings: result});
   })
 }
 
   public render(): React.ReactElement<IEmployeeProps> {
     let option: IDropdownOption[]=[];
-    const { sDate } = this.state;
-    //const{target}= event;
-    const printList= this.state.listTitle.map( item=>
-        <p>{item.text}&emsp;{item.key.toString().substr(0,10)}</p>)
+
+    const check= "random2@ContossoModWork.onmicrosoft.com";
+    const print1= this.state.leaveSettings.map(item=><p>{item.key}</p>);
+    const print2= this.state.leaveSettings.map(item=><p>{item.text}</p>);
+    const printList1= this.state.listTitle.map( item=> <p>{item.text}</p>);
+    const printList2= this.state.listTitle.map( item=> <p>{item.key.toString().substr(0,10)}</p>)
+    const printSatus= this.state.items.map(item=> <tr><td>{item.user_id}</td><td>{item.start_date}</td><td>{item.end_date}</td><td>{item.type}</td><td>{item.comment}</td><td>{item.cc}</td><td>{item.status}</td></tr>)
 
     return (
       <div className={ styles.employee }>
-        <div className={ styles.container }>
-          <div className={ styles.row }>
-            <div className={ styles.column }>
-              <span className={ styles.title }>Welcome to Contosso Leave Management System!</span>     
-            </div>
-            
-            </div>
-
-          </div>
           <div className={styles.container}>
       <Pivot aria-label="Basic Pivot Example" >
-        <PivotItem
-          headerText="Public Holidays"
-          headerButtonProps={{
-            'data-order': '1',
-            'data-title': 'My Files Title',
-          }}
-        >
+      <PivotItem
 
-          <Label className={styles.label}>Event</Label><Label className={styles.label}>Date</Label>
-    <div>{printList}</div>
+headerText="Holidays"
 
-        {/*<Dropdown           
-           placeholder="Select" className={styles.dropdown}
-           options={this.state.listTitle}
-           onChange={this.getListTitle}>
-          </Dropdown>
+headerButtonProps={{
+  'data-order': '1',
+  'data-title': 'My Files Title',
+}}>
 
-          <TextField label="Date" type="date"/>
+<div className={styles.grid}>
+  <div className={styles.gridRow}>
+  <div className={styles.smallCol}>
+      Leave Type
+    </div>
+    <div className={styles.largeCol}>
+      Number of Days
+    </div>
+    <div className={styles.smallCol}>
+      {print2}
+    </div>
+    <div className={styles.largeCol}>
+        {print1}
+    </div>
+  </div>
+  </div>
 
-          <TextField label="New Event Name" />
-
-          <PrimaryButton text="Create List Item" className={styles.button}
-           onClick={()=>
-            this._spOps
-            .CreateHolidayList(this.props.context,this.selectedListTitle)
-            .then((result:string)=>{
-             this.setState({ status: result});
-           })
-           }>             
-           </PrimaryButton>
-           
-
-           <PrimaryButton text="Update List Item" className={styles.button}
-           >             
-           </PrimaryButton>
-
-           <PrimaryButton text="Delete List Item" className={styles.button}
-           onClick={()=>this._spOps.DeleteItemHolidayList(
-             this.props.context,
-             this.selectedListTitle)}
-           >             
-           </PrimaryButton>  
-           <div>{this.state.status}</div>   */}  
-        </PivotItem>  
+<div className={styles.grid}>
+  <div className={styles.gridRow}>
+  <div className={styles.smallCol}>
+      Occasion
+    </div>
+    <div className={styles.largeCol}>
+        Date
+    </div>
+    <div className={styles.smallCol}>
+      {printList1}
+    </div>
+    <div className={styles.largeCol}>
+        {printList2}
+    </div>
+  </div>
+  </div>
+  </PivotItem>
 
         <PivotItem headerText="Apply for Leave">
+          <form>
           <Label className={styles.label}>New Application for Leave</Label>
           <ChoiceGroup defaultSelectedKey="B" options={this.state.leaveSettings} onChange={_onChange} label="Select Leave Type" required={true} />
           <TextField id ="sDate" label="Start Date" onChange={(e)=> this.setState({sDate: (e.target as HTMLInputElement).value})} type="date" required= {true}/>          
           <TextField min={format(this.state.sDate,"YYYY-MM-DD")} label="End Date" type="date"/>
-          {/* Need to add validation for start date< end date. Also, wondering if it is okay to not 
-          keep end date as required as ppl may request single day leave as well */}
           <TextField label="Reason"/>
           <TextField label="Additional Approver" type="email"/>
           {/* Need to add suggestions for mail id */}
           <br/>
           <PrimaryButton text="Request Leave" className={styles.button}/> 
+          </form>
         </PivotItem> 
 
-        
+        <PivotItem headerText="Request Status">
+        <table>
+  <tr><td>ID</td><td>Start Date</td><td>End Date</td><td>Type</td><td>Comment</td><td>CC</td><td>Status</td></tr>
+  </table>
+  <hr/>
+  <table>
+        <div>{printSatus}</div>
+        </table>
+        </PivotItem>
+      
     </Pivot>
         </div>
       </div>

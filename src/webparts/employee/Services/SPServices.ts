@@ -26,13 +26,13 @@ export class SPOperations{
             resolve(listTitle);
         },
         (error:any):void=>{
-            reject("error occured" + error)
+            reject("error occured" + error);
         }); 
         
         });
 
-       
     }
+
     public GetAllLeaveSettings(context: WebPartContext): Promise<IChoiceGroupOption[]>{
         let restApiUrl: string= context.pageContext.web.absoluteUrl+"/_api/web/lists/getByTitle('LeaveSettings')/items";
         var listTitle: IChoiceGroupOption[]=[];
@@ -43,15 +43,15 @@ export class SPOperations{
                     console.log(results);
                     results.value.map((result:any)=>{
                         listTitle.push({
-                            key: result.Title,
-                            text: result.Title 
+                            text: result.Title,
+                            key: result.Allowednumberofdays,
                         });
                     });
                 });
                 resolve(listTitle);
             },
             (error:any):void=>{
-                reject("error occured" + error)
+                reject("error occured" + error);
             }); 
         });
     }
@@ -81,13 +81,5 @@ export class SPOperations{
                 
             });
         });
-    }
-
-
-
-    public DeleteItemHolidayList(context:WebPartContext, listTitle:string){
-
-         
-    }
-    
+    }  
 }

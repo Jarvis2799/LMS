@@ -12,4 +12,14 @@ export interface IEmployeeState{
 
     sDate: string;
 
+    items: [{id: "",
+    user_id: "",
+    start_date: "",
+    end_date: "",
+    cc: "",
+    type: "",
+    comment: "",
+    status: ""}] ;
+
+    creds: [{text:""}];
 }

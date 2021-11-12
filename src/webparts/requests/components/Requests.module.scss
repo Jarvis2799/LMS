@@ -1,41 +1,10 @@
 @import '~office-ui-fabric-react/dist/sass/References.scss';
 
-.employee {
+.requests {
   .container {
     max-width: 700px;
     margin: 0px auto;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
-  }
-
-  .grid {
-    @include ms-Grid;
-    background-color: lightgrey;
-  }
-
-  .gridHeading {
-    background-color: burlywood;  
-  }
-
-  .gridRow {
-    @include ms-Grid-row;
-  }
-
-  .smallCol {
-    @include ms-Grid-col;
-    @include ms-lg2;
-    @include ms-sm6;
-    @include ms-md4;
-    color: black !important;
-    margin-top: 20px;
-  }
-
-  .largeCol {
-    @include ms-Grid-col;
-    @include ms-lg10;
-    @include ms-sm6;
-    @include ms-md8;
-    color: black !important;
-    margin-top: 20px;
   }
 
   .row {
@@ -66,11 +35,6 @@
   .description {
     @include ms-font-l;
     @include ms-fontColor-white;
-  }
-
-s  .dropdown {
-    width: 60%;
-    margin-left: 10px;
   }
 
   .button {
