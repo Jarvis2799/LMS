@@ -5,6 +5,7 @@ import { IEmployeeState } from './IEmployeeState';
 import { escape } from '@microsoft/sp-lodash-subset';
 import {SPOperations} from "../Services/SPServices";
 import { TextField} from '@fluentui/react/lib/TextField';
+import { setIconOptions } from "office-ui-fabric-react/lib/Styling";
 import { Dropdown, IDropdownOption, Label, Pivot, PivotItem, PrimaryButton,DefaultButton, List, IChoiceGroupOption, ChoiceGroup, format} from "office-ui-fabric-react";
 
 import * as jquery from "jquery";
@@ -25,45 +26,78 @@ export default class Employee extends React.Component<IEmployeeProps, IEmployeeS
     user_id: "",
     start_date: "",
     end_date: "",
-    cc: "",
     type: "",
+    cc: "",
     comment: "",
-    status: ""}],
-    creds:[{text: ""}]};
+    status: "",
+    days: ""}],
+    bal: [{
+      id: "",
+      text: ""
+    }]
+  };
   }
 public getListTitle=(event:any, data:any)=>{
   this.selectedListTitle=data.text;
-};
+}
 public getLeaveSettings=(event:any, data:any)=>{
   this.selectedLeaveSettings=data.text;
-};
+}
 public getListTitle2=(event:any, data:any)=>{
   this.selectedListTitle2=data.text;
-};
+}
 public componentDidMount(){
   this._spOps.GetAllHolidayList(this.props.context).then((result:IDropdownOption[])=>{
-    this.setState({listTitle:result}); })
+    this.setState({listTitle:result}); });
 
     fetch("https://contosofunctions.azurewebsites.net/api/getitem/")
     .then((res) => res.json())
     .then((json) => {
     this.setState({items: json});
-    })
+    });
   
   this._spOps.GetAllLeaveSettings(this.props.context).then((result:IChoiceGroupOption[])=>{
     this.setState({leaveSettings: result});
-  })
+  });
 }
 
   public render(): React.ReactElement<IEmployeeProps> {
-    let option: IDropdownOption[]=[];
 
-    const check= "random2@ContossoModWork.onmicrosoft.com";
-    const print1= this.state.leaveSettings.map(item=><p>{item.key}</p>);
+    const check= escape(this.props.userid);
+    const print1= this.state.leaveSettings.map(item=><p>{parseInt(item.key)}</p>);
     const print2= this.state.leaveSettings.map(item=><p>{item.text}</p>);
     const printList1= this.state.listTitle.map( item=> <p>{item.text}</p>);
-    const printList2= this.state.listTitle.map( item=> <p>{item.key.toString().substr(0,10)}</p>)
-    const printSatus= this.state.items.map(item=> <tr><td>{item.user_id}</td><td>{item.start_date}</td><td>{item.end_date}</td><td>{item.type}</td><td>{item.comment}</td><td>{item.cc}</td><td>{item.status}</td></tr>)
+    const printList2= this.state.listTitle.map( item=> <p>{item.key.toString().substr(0,10)}</p>);
+
+    var start: JSX.Element[]= [], end: JSX.Element[]= [], type: JSX.Element[]= [], days: JSX.Element[]= [], cc: JSX.Element[]= [], comment: JSX.Element[]= [], status: JSX.Element[]= [];
+
+    if (this.state.items.length) {
+      this.state.items.map((item) => { 
+        if (item.user_id ===check.toString()) {start.push(<p key= {item.id}>{item.start_date}</p>) , 
+        end.push(<p key= {item.id}>{item.end_date}</p>), type.push(<p key= {item.id}>{item.type}</p>), 
+        cc.push(<p key= {item.id}>{item.cc}</p>), comment.push(<p key= {item.id}>{item.comment}</p>), 
+        status.push(<p key= {item.id}>{item.status}</p>), days.push(<p key= {item.id}>{item.days}</p>)};
+        }
+        );
+    }
+
+    this.state.leaveSettings.map((item)=>{
+      this.state.bal.push({id: item.text, text: item.key});
+    })
+
+    if (this.state.items.length) {
+      this.state.items.map((item) => { 
+        if (item.user_id ===check.toString()) {
+          this.state.leaveSettings.map((newItem)=>{
+            this.state.bal.map((nItem)=>{
+            if(item.status==="approved".toString() && item.type.toString()===newItem.text.toString() && nItem.id===item.type){
+                nItem.text= (parseInt(nItem.text)- parseInt(item.days)).toString();
+              }})})
+      }
+    });
+    }
+
+    const balance= this.state.bal.map((item)=><p>{item.text}</p>);
 
     return (
       <div className={ styles.employee }>
@@ -90,7 +124,7 @@ headerButtonProps={{
       {print2}
     </div>
     <div className={styles.largeCol}>
-        {print1}
+        {balance}
     </div>
   </div>
   </div>
@@ -128,15 +162,50 @@ headerButtonProps={{
         </PivotItem> 
 
         <PivotItem headerText="Request Status">
-        <table>
-  <tr><td>ID</td><td>Start Date</td><td>End Date</td><td>Type</td><td>Comment</td><td>CC</td><td>Status</td></tr>
-  </table>
-  <hr/>
-  <table>
-        <div>{printSatus}</div>
-        </table>
-        </PivotItem>
-      
+     <div className={styles.grid}>
+  <div className={styles.gridRow}>
+  <div className={styles.smallColm}>
+      Start Date
+    </div>
+    <div className={styles.smallColm}>
+      End Date
+    </div>
+    <div className={styles.smallColm}>
+      Type
+    </div>
+    <div className={styles.smallColm}>
+      Comment
+    </div>
+    <div className={styles.smallColm}>
+      Days
+    </div>
+    <div className={styles.smallColm}>
+      Status
+    </div>
+    
+    <div className={styles.smallColm}>
+      {start}
+    </div>
+    <div className={styles.smallColm}>
+        {end}
+    </div>
+    <div className={styles.smallColm}>
+      {type}
+    </div>
+    <div className={styles.smallColm}>
+      {comment}
+    </div>
+    <div className={styles.smallColm}>
+      {days}
+    </div>
+    <div className={styles.smallColm}>
+      {status}
+    </div>
+  </div>
+  </div>
+
+      </PivotItem>
+
     </Pivot>
         </div>
       </div>

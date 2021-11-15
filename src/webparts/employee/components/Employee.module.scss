@@ -29,6 +29,16 @@
     margin-top: 20px;
   }
 
+  .smallColm {
+    @include ms-Grid-col;
+    @include ms-lg2;
+    @include ms-sm2;
+    @include ms-md2;
+    word-break: break-all;
+    color: black !important;
+    margin-top: 20px;
+  }
+
   .largeCol {
     @include ms-Grid-col;
     @include ms-lg10;

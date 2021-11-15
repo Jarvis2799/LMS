@@ -23,6 +23,7 @@ export default class EmployeeWebPart extends BaseClientSideWebPart<IEmployeeWebP
       {
         description: this.properties.description,
         context: this.context,
+        userid: this.context.pageContext.user.email
       }
     );
 

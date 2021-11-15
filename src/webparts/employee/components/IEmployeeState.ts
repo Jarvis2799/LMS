@@ -16,10 +16,14 @@ export interface IEmployeeState{
     user_id: "",
     start_date: "",
     end_date: "",
-    cc: "",
     type: "",
+    cc: "",
     comment: "",
-    status: ""}] ;
+    status: "",
+    days: ""}] ;
 
-    creds: [{text:""}];
+    bal: [{
+        id: string,
+        text: string
+      }];
 }
