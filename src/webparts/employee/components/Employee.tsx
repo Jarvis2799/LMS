@@ -6,11 +6,7 @@ import { escape } from '@microsoft/sp-lodash-subset';
 import {SPOperations} from "../Services/SPServices";
 import { TextField} from '@fluentui/react/lib/TextField';
 import { setIconOptions } from "office-ui-fabric-react/lib/Styling";
-import { Dropdown, IDropdownOption, Label, Pivot, PivotItem, PrimaryButton,DefaultButton, List, IChoiceGroupOption, ChoiceGroup, format} from "office-ui-fabric-react";
-
-import * as jquery from "jquery";
-import { getJSON } from 'jquery';
-import { useEffect, useState } from 'react';
+import { Dropdown, IDropdownOption, Label, Pivot, PivotItem, PrimaryButton, IChoiceGroupOption, ChoiceGroup, format} from "office-ui-fabric-react";
 
 export default class Employee extends React.Component<IEmployeeProps, IEmployeeState, {}> {
   public _spOps: SPOperations;
@@ -18,7 +14,6 @@ export default class Employee extends React.Component<IEmployeeProps, IEmployeeS
   public selectedListTitle2:string;
   public selectedLeaveSettings: string;
   
-
   constructor(props: IEmployeeProps){
     super(props);
     this._spOps= new SPOperations();
@@ -66,7 +61,7 @@ public componentDidMount(){
     const check= escape(this.props.userid);
     const print1= this.state.leaveSettings.map(item=><p>{parseInt(item.key)}</p>);
     const print2= this.state.leaveSettings.map(item=><p>{item.text}</p>);
-    const printList1= this.state.listTitle.map( item=> <p>{item.text}</p>);
+    const printList1= this.state.listTitle.map( (item)=> (<p>{item.text}</p>));
     const printList2= this.state.listTitle.map( item=> <p>{item.key.toString().substr(0,10)}</p>);
 
     var start: JSX.Element[]= [], end: JSX.Element[]= [], type: JSX.Element[]= [], days: JSX.Element[]= [], cc: JSX.Element[]= [], comment: JSX.Element[]= [], status: JSX.Element[]= [];
